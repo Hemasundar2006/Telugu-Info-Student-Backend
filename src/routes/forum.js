@@ -1,0 +1,32 @@
+const express = require('express');
+const router = express.Router();
+const forumController = require('../controllers/forumController');
+const { protect } = require('../middleware/auth');
+const { uploadMultipleFiles } = require('../middleware/upload');
+const { validatePost, validateAnswer, validateReply } = require('../validators/forumValidator');
+const { validate } = require('../middleware/validate');
+
+router.get('/posts', forumController.getAllPosts);
+router.get('/posts/category/:cat', forumController.getByCategory);
+router.get('/posts/trending', forumController.getTrending);
+router.get('/posts/unanswered', forumController.getUnanswered);
+router.get('/my-posts', protect, forumController.getMyPosts);
+router.get('/my-answers', protect, forumController.getMyAnswers);
+router.get('/bookmarked', protect, forumController.getBookmarked);
+router.get('/posts/:id', forumController.getPostById);
+router.post('/posts', protect, validatePost, validate, forumController.createPost);
+router.put('/posts/:id', protect, forumController.updatePost);
+router.delete('/posts/:id', protect, forumController.deletePost);
+router.post('/posts/:id/upvote', protect, forumController.upvotePost);
+router.post('/posts/:id/downvote', protect, forumController.downvotePost);
+router.post('/posts/:id/bookmark', protect, forumController.bookmarkPost);
+router.post('/posts/:id/report', protect, forumController.reportPost);
+router.get('/posts/:id/answers', forumController.getAnswers);
+router.post('/posts/:id/answers', protect, validateAnswer, validate, forumController.postAnswer);
+router.put('/answers/:id', protect, forumController.updateAnswer);
+router.delete('/answers/:id', protect, forumController.deleteAnswer);
+router.post('/answers/:id/upvote', protect, forumController.upvoteAnswer);
+router.post('/answers/:id/accept', protect, forumController.acceptAnswer);
+router.post('/answers/:id/reply', protect, validateReply, validate, forumController.replyToAnswer);
+
+module.exports = router;
